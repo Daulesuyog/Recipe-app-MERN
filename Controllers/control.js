@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import json from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import {User} from "../Models/User.js";
 
 export const register = async (req,res)=>{
@@ -28,8 +28,8 @@ try{
    if(!validPass) return res.json({message:"oops Inavlid Crediatials"});
 
    //here i created webtoken to secure more and user not want login  when visot website
-   const token = json.sign({userid:user.id}, "!@#$%^&*()",{
-  expiresIn : "2h"
+   const token = jwt.sign({userid:user.id}, "!@#$%^&*()",{
+  expiresIn : "3h"
    });
 
    res.json({message:`Welcome to your dashboard! ${user.name}`, token})
@@ -38,6 +38,11 @@ try{
 }
 }
 
-export const profile = async (req,res)=>{
-    res.json({user:req.user})
-}
+export const profile = async (req, res) => {
+    try {
+        res.json({ user: req.user });
+    } catch (err) {
+        console.error("Profile Fetch Error:", err);
+        res.status(500).json({ message: "Failed to fetch profile", error: err.message });
+    }
+};

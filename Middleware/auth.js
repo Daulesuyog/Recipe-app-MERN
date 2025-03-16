@@ -1,12 +1,12 @@
 import { User } from "../Models/User.js";
-import json from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export const Authenticate = async (req,res,next) =>{
     const token = req.header("Authorization")
     try {
         if(!token) return res.json({message:"login first"})
 
-        const decode = json.verify(token, "!@#$%^&*()");
+        const decode = jwt.verify(token, "!@#$%^&*()");
 
          console.log("this is decoded data ",decode)
 
@@ -19,6 +19,7 @@ export const Authenticate = async (req,res,next) =>{
         req.user = user;
         next();
     } catch (error) {
-        res.json({message:error})
+        console.error("Authentication Error:", error);
+        res.status(401).json({ message: "Invalid token", error: error.message });
     }
 }
